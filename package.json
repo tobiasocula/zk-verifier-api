@@ -1,0 +1,17 @@
+{
+  "name": "zk-transaction-verification-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "snarkjs": "^0.7.5",
+    "zksync-ethers": "^6.19.0"
+  }
+}
