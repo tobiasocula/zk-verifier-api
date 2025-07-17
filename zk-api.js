@@ -1,6 +1,7 @@
 const {Contract, Provider, ZkSyncSigner} = require("zksync-ethers");
 const {groth16} = require("snarkjs");
 const artifact = require('./contract.json');
+const ethers = require('ethers');
 
 const contractAddress = "0xE35E52bc5f88E5F238dCb59206Ef5eFc5697dE36";
 
@@ -19,17 +20,16 @@ const sum = (arr) => {
     return s;
 }
 
-export async function generateProof(
+async function generateProof(
     values, upper, lower, upperEq, lowerEq
 ) {
-    const zkSyncProvider = new Provider("https://sepolia.era.zksync.dev");
-    const contract = new Contract(contractAddress, artifact.abi, zkSyncProvider);
 
     let i = {};
     for (let j=0; j<16; j++) {
-        i[`a${j+1}`] = inputFields[j] ? inputFields[j].toString() : "0";
+        i[`a${j+1}`] = values[j] ? values[j].toString() : "0";
     }
 
+    let t = 0;
     if (upper || lower) {
     if (lower !== undefined) {
       if (lowerEq) {
@@ -108,12 +108,12 @@ export async function generateProof(
 
     return await groth16.fullProve(
         i,
-        "/circuit.wasm",  
-        "/circuit_final.zkey" 
+        "./circuit.wasm",  
+        "./circuit_final.zkey" 
     );
 }
 
-export async function verifyProof(proof, publicSignals, contract) {
+function getSubmitData(proof, publicSignals) {
 
     const a = [proof.pi_a[0], proof.pi_a[1]];
     const b = [
@@ -122,16 +122,17 @@ export async function verifyProof(proof, publicSignals, contract) {
         ];
     const c = [proof.pi_c[0], proof.pi_c[1]];
     const inp = publicSignals.map(x => x.toString());
-    const tx = await contract.submitProof(a, b, c, inp);
-    const receipt = await tx.wait();
-    return receipt;
-}
-    
-export async function generateAndVerify(data) {
-
-    const {proof, publicSignals} = await generateProof(data); //
-    const receipt = await verifyProof(proof, publicSignals);
-    return receipt;
+    return {a, b, c, inp}
 }
 
+function getContractInterface() {
+  return new ethers.Interface(artifact.abi);
+}
+  
 
+module.exports = {
+  getSubmitData,
+  generateProof,
+  contractAddress,
+  getContractInterface
+}

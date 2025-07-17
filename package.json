@@ -1,15 +1,23 @@
 {
   "name": "zk-transaction-verification-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "zk-api.js",
+  "files": [
+    "zk-api.js",
+    "circuit.wasm",
+    "circuit_final.zkey",
+    "contract.json"
+  ],
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "tobiasocula",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^17.2.0",
     "ethers": "^6.15.0",
     "snarkjs": "^0.7.5",
     "zksync-ethers": "^6.19.0"
